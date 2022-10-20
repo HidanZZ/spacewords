@@ -1,0 +1,54 @@
+[gd_scene load_steps=9 format=2]
+
+[ext_resource path="res://assets/sprites/output-onlinegiftools (4).png" type="Texture" id=1]
+[ext_resource path="res://scenes/gameplay/pause-layer/pause-layer.tscn" type="PackedScene" id=2]
+[ext_resource path="res://assets/sprites/Spaceship Game BG.png" type="Texture" id=3]
+[ext_resource path="res://scenes/objects/bullet.tscn" type="PackedScene" id=4]
+[ext_resource path="res://scenes/gameplay/gameplay.gd" type="Script" id=5]
+
+[sub_resource type="AtlasTexture" id=1]
+flags = 4
+atlas = ExtResource( 1 )
+region = Rect2( 0, 0, 138, 192 )
+
+[sub_resource type="AtlasTexture" id=2]
+flags = 4
+atlas = ExtResource( 1 )
+region = Rect2( 138, 0, 138, 192 )
+
+[sub_resource type="SpriteFrames" id=3]
+animations = [ {
+"frames": [ SubResource( 1 ), SubResource( 2 ) ],
+"loop": true,
+"name": "default",
+"speed": 5.0
+} ]
+
+[node name="Gameplay" type="Node2D"]
+script = ExtResource( 5 )
+
+[node name="Sprite" type="AnimatedSprite" parent="."]
+position = Vector2( 354, 1145 )
+rotation = -0.15708
+frames = SubResource( 3 )
+frame = 1
+playing = true
+
+[node name="PauseLayer" parent="." instance=ExtResource( 2 )]
+
+[node name="ParallaxBackground" type="ParallaxBackground" parent="."]
+
+[node name="ParallaxLayer" type="ParallaxLayer" parent="ParallaxBackground"]
+motion_mirroring = Vector2( 0, 1290.64 )
+__meta__ = {
+"_edit_group_": true,
+"_edit_lock_": true
+}
+
+[node name="SpaceshipGameBg" type="Sprite" parent="ParallaxBackground/ParallaxLayer"]
+position = Vector2( 360, 643.5 )
+scale = Vector2( 1.11692, 1.36 )
+texture = ExtResource( 3 )
+
+[node name="bullet" parent="." instance=ExtResource( 4 )]
+position = Vector2( 600, 1000 )
