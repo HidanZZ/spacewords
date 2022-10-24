@@ -1,0 +1,126 @@
+[gd_scene load_steps=16 format=2]
+
+[ext_resource path="res://assets/sprites/output-onlinegiftools (4).png" type="Texture" id=1]
+[ext_resource path="res://scenes/objects/player.gd" type="Script" id=2]
+
+[sub_resource type="CapsuleShape2D" id=4]
+radius = 30.0
+height = 48.5715
+
+[sub_resource type="Shader" id=5]
+code = "shader_type canvas_item;
+
+uniform float hit_opacity = 0;
+
+void fragment(){
+ COLOR.rgb = texture(TEXTURE, UV).rgb * (1.0 - hit_opacity) + vec3(0.8,0,0) * hit_opacity; 
+ COLOR.a = texture(TEXTURE, UV).a ; 
+}"
+
+[sub_resource type="ShaderMaterial" id=6]
+shader = SubResource( 5 )
+shader_param/hit_opacity = 0.0
+
+[sub_resource type="AtlasTexture" id=1]
+flags = 4
+atlas = ExtResource( 1 )
+region = Rect2( 0, 0, 138, 192 )
+
+[sub_resource type="AtlasTexture" id=2]
+flags = 4
+atlas = ExtResource( 1 )
+region = Rect2( 138, 0, 138, 192 )
+
+[sub_resource type="SpriteFrames" id=3]
+animations = [ {
+"frames": [ SubResource( 1 ), SubResource( 2 ) ],
+"loop": true,
+"name": "default",
+"speed": 5.0
+} ]
+
+[sub_resource type="Gradient" id=9]
+offsets = PoolRealArray( 0, 0.319927, 0.630713, 0.877514, 1 )
+colors = PoolColorArray( 0.927246, 0.412147, 0.0833073, 1, 0.844238, 0.545468, 0.174784, 1, 0.848145, 0.783372, 0.11927, 1, 0.949707, 0.873221, 0.089035, 1, 0.949707, 0.84305, 0, 1 )
+
+[sub_resource type="GradientTexture" id=10]
+gradient = SubResource( 9 )
+
+[sub_resource type="Curve" id=11]
+_data = [ Vector2( 0, 1 ), 0.0, 0.0, 0, 0, Vector2( 1, 0 ), 0.0, 0.0, 0, 0 ]
+
+[sub_resource type="CurveTexture" id=12]
+curve = SubResource( 11 )
+
+[sub_resource type="ParticlesMaterial" id=13]
+emission_shape = 2
+emission_box_extents = Vector3( 10, 20, 0 )
+flag_disable_z = true
+direction = Vector3( 0, 1, 0 )
+spread = 17.12
+gravity = Vector3( 0, 60, 0 )
+initial_velocity = 125.73
+orbit_velocity = 0.0
+orbit_velocity_random = 0.0
+linear_accel = 2.3
+scale = 15.0
+scale_curve = SubResource( 12 )
+color_ramp = SubResource( 10 )
+
+[sub_resource type="Animation" id=7]
+length = 0.001
+tracks/0/type = "value"
+tracks/0/path = NodePath("Sprite:material:shader_param/hit_opacity")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/keys = {
+"times": PoolRealArray( 0 ),
+"transitions": PoolRealArray( 1 ),
+"update": 0,
+"values": [ 0.0 ]
+}
+
+[sub_resource type="Animation" id=8]
+resource_name = "error"
+length = 0.4
+tracks/0/type = "value"
+tracks/0/path = NodePath("Sprite:material:shader_param/hit_opacity")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/keys = {
+"times": PoolRealArray( 0, 0.1, 0.2, 0.3, 0.4 ),
+"transitions": PoolRealArray( 1, 1, 1, 1, 1 ),
+"update": 0,
+"values": [ 0.0, 1.0, 0.0, 1.0, 0.0 ]
+}
+
+[node name="player" type="Area2D"]
+unique_name_in_owner = true
+position = Vector2( 366, 1171 )
+script = ExtResource( 2 )
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+visible = false
+scale = Vector2( 0.7, 0.7 )
+shape = SubResource( 4 )
+
+[node name="Sprite" type="AnimatedSprite" parent="."]
+material = SubResource( 6 )
+position = Vector2( 1, 0 )
+scale = Vector2( 0.7, 0.7 )
+frames = SubResource( 3 )
+
+[node name="Particles2D" type="Particles2D" parent="Sprite"]
+show_behind_parent = true
+position = Vector2( -1.42859, 0 )
+scale = Vector2( 1.42857, 1.42857 )
+amount = 25
+process_material = SubResource( 13 )
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="."]
+anims/RESET = SubResource( 7 )
+anims/error = SubResource( 8 )

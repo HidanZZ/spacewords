@@ -1,0 +1,15 @@
+[remap]
+
+importer="mp3"
+type="AudioStreamMP3"
+path="res://.import/error-2-36058.mp3-0642a37af3bfb72138aca0688ca3300b.mp3str"
+
+[deps]
+
+source_file="res://assets/sounds/error-2-36058.mp3"
+dest_files=[ "res://.import/error-2-36058.mp3-0642a37af3bfb72138aca0688ca3300b.mp3str" ]
+
+[params]
+
+loop=false
+loop_offset=0

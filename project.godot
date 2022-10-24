@@ -45,6 +45,7 @@ Game="*res://addons/game-template/game.gd"
 Transitions="*res://addons/game-template/transition/transition.tscn"
 Utils="*res://addons/game-template/utils.gd"
 Global="*res://scenes/global.gd"
+Keyboard="*res://scenes/keyboard.gd"
 
 [category]
 
@@ -54,8 +55,7 @@ property_name=1
 
 window/size/width=720
 window/size/height=1280
-window/size/test_width=400
-window/size/test_height=800
+window/size/test_width=500
 window/dpi/allow_hidpi=true
 window/stretch/mode="viewport"
 window/stretch/aspect="keep"

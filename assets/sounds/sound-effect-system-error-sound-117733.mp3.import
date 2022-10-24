@@ -1,0 +1,15 @@
+[remap]
+
+importer="mp3"
+type="AudioStreamMP3"
+path="res://.import/sound-effect-system-error-sound-117733.mp3-2a6d90ac76df15e0ee4c18aa88b4e925.mp3str"
+
+[deps]
+
+source_file="res://assets/sounds/sound-effect-system-error-sound-117733.mp3"
+dest_files=[ "res://.import/sound-effect-system-error-sound-117733.mp3-2a6d90ac76df15e0ee4c18aa88b4e925.mp3str" ]
+
+[params]
+
+loop=false
+loop_offset=0

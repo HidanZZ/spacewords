@@ -1,37 +1,65 @@
-[gd_scene load_steps=9 format=2]
+[gd_scene load_steps=21 format=2]
 
-[ext_resource path="res://assets/sprites/output-onlinegiftools (4).png" type="Texture" id=1]
+[ext_resource path="res://scenes/objects/player.tscn" type="PackedScene" id=1]
 [ext_resource path="res://scenes/gameplay/pause-layer/pause-layer.tscn" type="PackedScene" id=2]
 [ext_resource path="res://assets/sprites/Spaceship Game BG.png" type="Texture" id=3]
-[ext_resource path="res://scenes/objects/enemy.tscn" type="PackedScene" id=4]
+[ext_resource path="res://assets/sounds/laser-gun-81720.mp3" type="AudioStream" id=4]
 [ext_resource path="res://scenes/gameplay/gameplay.gd" type="Script" id=5]
+[ext_resource path="res://assets/sounds/Retro Beeep 06.wav" type="AudioStream" id=6]
+[ext_resource path="res://assets/fonts/open-sans/open-sans-bold.ttf" type="DynamicFontData" id=7]
+[ext_resource path="res://assets/sprites/Asteroid 1.png" type="Texture" id=8]
+[ext_resource path="res://assets/sounds/Asteroid Explosion Audio.mp3" type="AudioStream" id=9]
+[ext_resource path="res://assets/fonts/open-sans/open-sans-regular.ttf" type="DynamicFontData" id=10]
+[ext_resource path="res://scenes/gameplay/level.gd" type="Script" id=11]
 
-[sub_resource type="AtlasTexture" id=1]
-flags = 4
-atlas = ExtResource( 1 )
-region = Rect2( 0, 0, 138, 192 )
+[sub_resource type="Environment" id=1]
+background_mode = 4
+tonemap_mode = 2
+glow_enabled = true
+glow_levels/1 = true
+glow_levels/2 = true
+glow_levels/4 = true
+glow_levels/6 = true
+glow_levels/7 = true
+glow_blend_mode = 1
+glow_hdr_threshold = 1.5
+glow_bicubic_upscale = true
+glow_high_quality = true
 
-[sub_resource type="AtlasTexture" id=2]
-flags = 4
-atlas = ExtResource( 1 )
-region = Rect2( 138, 0, 138, 192 )
+[sub_resource type="StyleBoxEmpty" id=2]
 
-[sub_resource type="SpriteFrames" id=3]
-animations = [ {
-"frames": [ SubResource( 1 ), SubResource( 2 ) ],
-"loop": true,
-"name": "default",
-"speed": 5.0
-} ]
+[sub_resource type="StyleBoxFlat" id=3]
+bg_color = Color( 1.3, 0.13, 0.13, 0.53 )
+
+[sub_resource type="Theme" id=4]
+ProgressBar/styles/bg = SubResource( 2 )
+ProgressBar/styles/fg = SubResource( 3 )
+
+[sub_resource type="DynamicFont" id=5]
+size = 32
+font_data = ExtResource( 7 )
+
+[sub_resource type="DynamicFont" id=6]
+size = 58
+font_data = ExtResource( 7 )
+
+[sub_resource type="DynamicFont" id=7]
+size = 36
+font_data = ExtResource( 10 )
+
+[sub_resource type="DynamicFont" id=8]
+size = 190
+font_data = ExtResource( 7 )
+
+[sub_resource type="DynamicFont" id=9]
+size = 119
+font_data = ExtResource( 7 )
 
 [node name="Gameplay" type="Node2D"]
 script = ExtResource( 5 )
 
-[node name="Sprite" type="AnimatedSprite" parent="."]
-position = Vector2( 354, 1145 )
-frames = SubResource( 3 )
-frame = 1
-playing = true
+[node name="player" parent="." instance=ExtResource( 1 )]
+z_index = 999
 
 [node name="PauseLayer" parent="." instance=ExtResource( 2 )]
 
@@ -49,7 +77,95 @@ position = Vector2( 360, 643.5 )
 scale = Vector2( 1.11692, 1.36 )
 texture = ExtResource( 3 )
 
-[node name="enemy" parent="." instance=ExtResource( 4 )]
-position = Vector2( 118, -86 )
-
 [node name="spawner" type="Timer" parent="."]
+
+[node name="shoot" type="AudioStreamPlayer" parent="."]
+stream = ExtResource( 4 )
+volume_db = -6.0
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+environment = SubResource( 1 )
+
+[node name="error" type="AudioStreamPlayer" parent="."]
+stream = ExtResource( 6 )
+volume_db = -10.0
+mix_target = 1
+
+[node name="hp" type="ProgressBar" parent="."]
+margin_top = 1271.0
+margin_right = 720.0
+margin_bottom = 1280.0
+theme = SubResource( 4 )
+percent_visible = false
+
+[node name="UI" type="CanvasLayer" parent="."]
+
+[node name="counter" type="Node2D" parent="UI"]
+position = Vector2( 185, 0 )
+
+[node name="Sprite" type="Sprite" parent="UI/counter"]
+position = Vector2( 660, 53 )
+scale = Vector2( 0.1, 0.1 )
+texture = ExtResource( 8 )
+
+[node name="counterLabel" type="Label" parent="UI/counter"]
+unique_name_in_owner = true
+anchor_left = 1.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+margin_left = 523.0
+margin_top = 31.0
+margin_right = 614.0
+margin_bottom = 79.0
+custom_fonts/font = SubResource( 5 )
+text = "0/15"
+align = 2
+valign = 1
+
+[node name="explode" type="AudioStreamPlayer" parent="."]
+stream = ExtResource( 9 )
+volume_db = -10.0
+
+[node name="level" type="CanvasLayer" parent="."]
+script = ExtResource( 11 )
+
+[node name="Label" type="Label" parent="level"]
+margin_left = 128.0
+margin_top = 463.0
+margin_right = 311.0
+margin_bottom = 542.0
+custom_fonts/font = SubResource( 6 )
+text = "LEVEL "
+
+[node name="desc" type="RichTextLabel" parent="level"]
+margin_left = 126.0
+margin_top = 596.0
+margin_right = 668.0
+margin_bottom = 660.0
+custom_fonts/normal_font = SubResource( 7 )
+bbcode_enabled = true
+bbcode_text = "Objectif : Destroy [color=#DC5F00]15[/color] asteroids"
+meta_underlined = false
+text = "Objectif : Destroy 15 asteroids"
+
+[node name="LVL" type="Label" parent="level"]
+margin_left = 316.0
+margin_top = 349.0
+margin_right = 424.0
+margin_bottom = 609.0
+custom_fonts/font = SubResource( 8 )
+text = "1"
+
+[node name="Completed" type="Label" parent="level"]
+margin_left = 720.0
+margin_top = 542.0
+margin_right = 1365.0
+margin_bottom = 802.0
+custom_fonts/font = SubResource( 9 )
+text = "Completed"
+
+[connection signal="hit" from="player" to="." method="_on_player_hit"]
+[connection signal="timeout" from="spawner" to="." method="_on_spawner_timeout"]
+[connection signal="finished_comp" from="level" to="." method="_on_level_finished_comp"]
+[connection signal="finished_trans" from="level" to="." method="_on_level_finished_trans"]
