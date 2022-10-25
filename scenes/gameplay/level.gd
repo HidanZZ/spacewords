@@ -32,7 +32,8 @@ func start():
 #	pass
 func set_desc(number):
 	$desc.bbcode_text="Objectif : Destroy [color=#DC5F00]%s[/color] asteroids"%str(number)
-
+func set_level(number):
+	$LVL.text=str(number)
 func completed():
 	var comp = $Completed
 	comp.rect_position.x=720.0

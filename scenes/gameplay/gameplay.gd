@@ -8,10 +8,11 @@ var levels
 var focused
 var current_level=1
 var max_enemy
-var enemy_destroyed=0
+var enemy_destroyed
 # `pre_start()` is called when a scene is loaded.
 # Use this function to receive params from `Game.change_scene(params)`.
 func pre_start(params):
+	randomize()
 	Keyboard.connect("key_pressed",self,"_on_key_pressed")
 	var file = File.new()	
 	file.open("res://assets/words.json", file.READ)
@@ -31,9 +32,13 @@ func pre_start(params):
 func change_counter():
 	var counter = $"%counterLabel"
 	counter.text=str(enemy_destroyed)+"/"+str(max_enemy)
+	print(counter.text)
 # `start()` is called when the graphic transition ends.
 func start():
 	max_enemy=15+(current_level-1)*5
+	enemy_destroyed=0
+	$level.set_desc(max_enemy)
+	$level.set_level(current_level)
 	$player.position.y=1380
 	change_counter()
 	$level.start()
@@ -51,6 +56,7 @@ func get_parameter(parameter):
 				url.searchParams.get("%s");
 			"""%parameter)
 	return null
+
 func _on_key_pressed(key):
 	var character= char(key)
 	if !is_instance_valid(focused):
@@ -106,8 +112,11 @@ func get_used_words():
 	
 	
 func next_level():
-	current_level+1
-	start()
+	current_level+=1
+	if current_level>3:
+		pass
+	else:
+		start()
 
 func spawn_enemy():
 	var e = enemy.instance()
@@ -155,6 +164,7 @@ func _on_spawner_timeout():
 	var all=[]
 	for i in get_tree().get_nodes_in_group("enemies"):
 		all.append(i.word)
+	$spawner.start(rand_range(1.5-(current_level*0.3),2.0-(current_level*0.3)))
 	 # Replace with function body.
 func _play_audio():
 	if !focused:
@@ -179,7 +189,7 @@ func _on_level_finished_trans():
 	tween.tween_property($player,"position:y",1171.0,0.5)
 	tween.tween_property($hp,"value",100.0,0.5)
 	tween.tween_property($UI/counter,"position:x",0.0,0.3)
-	tween.tween_callback($spawner,"start",[1.0])
+	tween.tween_callback($spawner,"start",[rand_range(1.5-(current_level*0.3),2.0-(current_level*0.3))])
 
 
 func _on_level_finished_comp():

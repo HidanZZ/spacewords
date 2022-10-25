@@ -19,11 +19,17 @@ export var deathParticle:PackedScene
 # Called when the node enters the scene tree for the first time.
 func _ready():
 	original_word=word
+	scale_astreoid()
 	var text=" "+str(original_word)+" "
 	$"%text".bbcode_text=text
 	var size=$"%text".get_font("normal_font").get_string_size(text)
 	$"%text".set_size(size)
 	$"%text".margin_bottom=0
+
+func scale_astreoid():
+	var perc=original_word.length()*0.25
+	$Sprite.scale+=$Sprite.scale*perc
+	$CollisionShape2D.scale+=$CollisionShape2D.scale*perc
 	
 func _change_text():
 	var text=original_word.substr(0,original_word.length()-word.length())
