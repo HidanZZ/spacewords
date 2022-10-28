@@ -56,6 +56,7 @@ property_name=1
 window/size/width=720
 window/size/height=1280
 window/size/test_width=500
+window/size/test_height=1000
 window/dpi/allow_hidpi=true
 window/stretch/mode="viewport"
 window/stretch/aspect="keep"

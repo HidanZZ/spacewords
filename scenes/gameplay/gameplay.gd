@@ -8,7 +8,13 @@ var levels
 var focused
 var current_level=1
 var max_enemy
+var dead= false
+var hp = 100.0
+var score = 0
 var enemy_destroyed
+#func _ready():
+#	pre_start({})
+#	start()
 # `pre_start()` is called when a scene is loaded.
 # Use this function to receive params from `Game.change_scene(params)`.
 func pre_start(params):
@@ -20,7 +26,7 @@ func pre_start(params):
 	levels =  JSON.parse(json).result
 	file.close()
 	
-	
+	print("loadddeeeeeeeeeeeeeeeeeeed")
 	var cur_scene: Node = get_tree().current_scene
 	if params:
 		for key in params:
@@ -35,6 +41,7 @@ func change_counter():
 	print(counter.text)
 # `start()` is called when the graphic transition ends.
 func start():
+	print('ended graphics')
 	max_enemy=15+(current_level-1)*5
 	enemy_destroyed=0
 	$level.set_desc(max_enemy)
@@ -45,8 +52,13 @@ func start():
 
 
 func _process(delta):
-	elapsed += delta
-	$ParallaxBackground.scroll_offset.y+=1
+	if !dead:
+		elapsed += delta
+		$ParallaxBackground.scroll_offset.y+=1
+		if hp == 0:
+			player_dead()
+	
+	
 	
 func get_parameter(parameter):
 	if OS.has_feature('JavaScript'):
@@ -114,7 +126,7 @@ func get_used_words():
 func next_level():
 	current_level+=1
 	if current_level>3:
-		pass
+		player_dead()
 	else:
 		start()
 
@@ -135,6 +147,7 @@ func spawn_enemy():
 	e.connect("shoot_self",self,"_on_enemy_shoot")
 	e.connect("destroyed",self,"_on_enemy_destroyed")
 	add_child(e)
+
 func _on_enemy_shoot(position,last,target):
 	var angle = rad2deg($"%player".global_position.angle_to_point(position))
 #	Engine.time_scale=0.5
@@ -146,10 +159,21 @@ func _on_enemy_destroyed():
 	enemy_destroyed+=1
 	change_counter()
 	animate_counter()
+	add_score()
 	if enemy_destroyed==max_enemy:
 		get_tree().call_group("enemies","stop")
 		$spawner.stop()
 		$level.completed()
+
+func add_score():
+	score += current_level
+	$"%Score".text=str(score)
+	var label= preload("res://scenes/objects/scoreAdd.tscn").instance()
+	label.rect_position=$"%Score".rect_position
+	label.rect_position.x+=$"%Score".rect_size.x/2
+	label.rect_position.y-=$"%Score".rect_size.y
+	label.score=current_level
+	add_child(label)
 
 func animate_counter():
 	var counter= $"%counterLabel"
@@ -171,15 +195,25 @@ func _play_audio():
 		return
 	var audio = $shoot
 	audio.pitch_scale=1.75-((1.0/focused.initial_size)*(focused.word.length()+1))
-	print("initial ",focused.initial_size)
-	print("current ",focused.word.length())
-	print("mult ",(0.75/focused.initial_size)*(focused.word.length()+1))
-	print(audio.pitch_scale)
+	
 	audio.play(0)
 	
 
+func player_dead():
+	dead=true
+	$player.death()
+	get_tree().call_group("enemies","stop")
+	$spawner.stop()
+	yield(get_tree().create_timer(0.5),"timeout")
+	show_end_screen()
+	
+
+func show_end_screen():
+	$Complete.set_visible(true)
+	$Complete.animate()
 
 func _on_player_hit():
+	hp-=20
 	var tween = create_tween()
 	tween.tween_property($hp,"value",-20.0,0.3).as_relative().from_current()# Replace with function body.
 
@@ -187,8 +221,9 @@ func _on_player_hit():
 func _on_level_finished_trans():
 	var tween= create_tween().set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
 	tween.tween_property($player,"position:y",1171.0,0.5)
-	tween.tween_property($hp,"value",100.0,0.5)
+	tween.tween_property($hp,"value",hp,0.5)
 	tween.tween_property($UI/counter,"position:x",0.0,0.3)
+	tween.parallel().tween_property($UI/Score,"rect_position:x",559.0,0.3)
 	tween.tween_callback($spawner,"start",[rand_range(1.5-(current_level*0.3),2.0-(current_level*0.3))])
 
 
@@ -196,3 +231,20 @@ func _on_level_finished_comp():
 	var tween= create_tween().set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
 	tween.tween_property($player,"position:y",-100.0,2.0)
 	tween.tween_callback(self,"next_level")# Replace with function body.
+
+
+func _on_Complete_completed():
+	$"%Score".align=Label.ALIGN_CENTER
+	$UI/Button.visible=true
+	var tween = create_tween().set_trans(Tween.TRANS_CUBIC)
+	tween.tween_property($UI/ScoreLabel,"rect_position:y",300.0,0.5)
+	tween.parallel().tween_property($"%Score","rect_position",Vector2(Game.size.x/2 - $"%Score".rect_size.x/2,530),0.5) # Replace with function body.
+	tween.parallel().tween_property($"%Score".get_font("font"),"size",122,0.5) # Replace with function body.
+	tween.parallel().tween_property($UI/Button,"modulate",Color(1,1,1,1),0.5) # Replace with function body.
+	tween.parallel().tween_property($UI/counter,"position:x",300.0,0.5).as_relative().from_current() # Replace with function body.
+
+
+func _on_Continue_pressed():
+	if score > Global.highscore:
+		Global.highscore=score
+	Game.change_scene("res://scenes/menu/menu.tscn") # Replace with function body.

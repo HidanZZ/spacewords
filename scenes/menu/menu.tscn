@@ -1,11 +1,13 @@
-[gd_scene load_steps=6 format=2]
+[gd_scene load_steps=9 format=2]
 
-[ext_resource path="res://assets/ui-theme.tres" type="Theme" id=1]
+[ext_resource path="res://scenes/objects/Button.tscn" type="PackedScene" id=1]
+[ext_resource path="res://assets/sprites/Spaceship Game BG.png" type="Texture" id=2]
+[ext_resource path="res://scenes/objects/player.tscn" type="PackedScene" id=3]
 [ext_resource path="res://assets/fonts/open-sans/open-sans-bold.ttf" type="DynamicFontData" id=4]
 [ext_resource path="res://scenes/menu/menu.gd" type="Script" id=5]
 
-[sub_resource type="DynamicFont" id=5]
-size = 60
+[sub_resource type="DynamicFont" id=3]
+size = 94
 font_data = ExtResource( 4 )
 
 [sub_resource type="GDScript" id=1]
@@ -14,69 +16,43 @@ script/source = "extends Label
 
 "
 
-[node name="Menu" type="Control"]
-anchor_right = 1.0
-anchor_bottom = 1.0
-theme = ExtResource( 1 )
+[sub_resource type="DynamicFont" id=2]
+size = 44
+font_data = ExtResource( 4 )
+
+[node name="Menu" type="Node2D"]
 script = ExtResource( 5 )
 __meta__ = {
-"_edit_lock_": true,
-"_edit_use_anchors_": false
+"_edit_lock_": true
 }
 
-[node name="ColorRect" type="ColorRect" parent="."]
-anchor_right = 1.0
-anchor_bottom = 1.0
-color = Color( 0.176471, 0.682353, 0.647059, 1 )
-
-[node name="CenterContainer" type="CenterContainer" parent="."]
-anchor_right = 1.0
-anchor_bottom = 1.0
-margin_bottom = -339.0
-
-[node name="Title" type="Label" parent="CenterContainer"]
-margin_top = 429.0
-margin_right = 733.0
-margin_bottom = 512.0
-custom_fonts/font = SubResource( 5 )
-text = "Godot Game Template"
-uppercase = true
-__meta__ = {
-"_edit_use_anchors_": false
-}
-
-[node name="VBoxContainer" type="VBoxContainer" parent="."]
+[node name="Button" parent="." instance=ExtResource( 1 )]
 anchor_left = 0.5
 anchor_top = 0.5
 anchor_right = 0.5
 anchor_bottom = 0.5
-margin_left = -100.0
-margin_top = -34.0
-margin_right = 100.0
-margin_bottom = 130.0
-custom_constants/separation = 16
+margin_left = -172.5
+margin_top = -58.5
+margin_right = 172.5
+margin_bottom = 58.5
+font_size = 42
 
-[node name="PlayButton" type="Button" parent="VBoxContainer"]
-margin_right = 200.0
-margin_bottom = 70.0
-rect_min_size = Vector2( 200, 70 )
-focus_neighbour_bottom = NodePath("../ExitButton")
-focus_next = NodePath("../ExitButton")
-text = "START"
+[node name="CenterContainer" type="CenterContainer" parent="."]
+anchor_right = 1.0
+anchor_bottom = 1.0
+margin_right = 720.0
+margin_bottom = 668.0
 
-[node name="ExitButton" type="Button" parent="VBoxContainer"]
-margin_top = 86.0
-margin_right = 200.0
-margin_bottom = 156.0
-rect_min_size = Vector2( 200, 70 )
-focus_neighbour_top = NodePath("../PlayButton")
-focus_previous = NodePath("../PlayButton")
-text = "EXIT"
-__meta__ = {
-"_edit_use_anchors_": false
-}
+[node name="Label" type="Label" parent="CenterContainer"]
+margin_left = 63.0
+margin_top = 269.0
+margin_right = 657.0
+margin_bottom = 398.0
+custom_fonts/font = SubResource( 3 )
+text = "Space Words"
 
 [node name="Version" type="VBoxContainer" parent="."]
+visible = false
 anchor_top = 1.0
 anchor_bottom = 1.0
 margin_left = 16.0
@@ -86,18 +62,19 @@ margin_bottom = -18.0
 
 [node name="GameVersion" type="Label" parent="Version"]
 margin_right = 182.0
-margin_bottom = 34.0
+margin_bottom = 14.0
 text = "<x.y.z>"
 
 [node name="GodotVersion" type="Label" parent="Version"]
-margin_top = 38.0
+margin_top = 18.0
 margin_right = 182.0
-margin_bottom = 72.0
+margin_bottom = 32.0
 custom_colors/font_color = Color( 0.92549, 0.92549, 0.92549, 1 )
 text = "<GodotVersion>"
 script = SubResource( 1 )
 
 [node name="Credits" type="VBoxContainer" parent="."]
+visible = false
 anchor_left = 1.0
 anchor_top = 1.0
 anchor_right = 1.0
@@ -110,15 +87,15 @@ grow_horizontal = 0
 grow_vertical = 0
 
 [node name="MadeByLabel" type="Label" parent="Credits"]
-margin_right = 243.0
-margin_bottom = 34.0
+margin_right = 142.0
+margin_bottom = 14.0
 custom_colors/font_color = Color( 1, 1, 1, 1 )
 text = "made by:"
 
 [node name="Developer1" type="Label" parent="Credits"]
-margin_top = 38.0
-margin_right = 243.0
-margin_bottom = 72.0
+margin_top = 18.0
+margin_right = 142.0
+margin_bottom = 32.0
 grow_horizontal = 0
 custom_colors/font_color = Color( 0.92549, 0.92549, 0.92549, 1 )
 text = "Crystal Bit community"
@@ -141,5 +118,28 @@ grow_horizontal = 0
 custom_colors/font_color = Color( 0.886275, 0.87451, 0.87451, 1 )
 text = "Developer 3"
 
-[connection signal="pressed" from="VBoxContainer/PlayButton" to="." method="_on_PlayButton_pressed"]
-[connection signal="pressed" from="VBoxContainer/ExitButton" to="." method="_on_ExitButton_pressed"]
+[node name="ParallaxBackground" type="ParallaxBackground" parent="."]
+
+[node name="ParallaxLayer" type="ParallaxLayer" parent="ParallaxBackground"]
+motion_mirroring = Vector2( 0, 1290.64 )
+__meta__ = {
+"_edit_group_": true,
+"_edit_lock_": true
+}
+
+[node name="SpaceshipGameBg" type="Sprite" parent="ParallaxBackground/ParallaxLayer"]
+position = Vector2( 360, 643.5 )
+scale = Vector2( 1.11692, 1.36 )
+texture = ExtResource( 2 )
+
+[node name="player" parent="." instance=ExtResource( 3 )]
+
+[node name="Highscore" type="Label" parent="."]
+margin_left = 16.0
+margin_top = 15.0
+margin_right = 229.0
+margin_bottom = 106.0
+custom_fonts/font = SubResource( 2 )
+text = "Best : 0"
+
+[connection signal="pressed" from="Button" to="." method="_on_Button_pressed"]

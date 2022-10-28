@@ -1,9 +1,51 @@
-[gd_scene load_steps=15 format=2]
+[gd_scene load_steps=18 format=2]
 
 [ext_resource path="res://assets/fonts/open-sans/open-sans-regular.ttf" type="DynamicFontData" id=1]
 [ext_resource path="res://assets/sprites/icon.png" type="Texture" id=2]
 [ext_resource path="res://addons/game-template/transition/progress.gd" type="Script" id=3]
 [ext_resource path="res://addons/game-template/transition/transition.gd" type="Script" id=4]
+[ext_resource path="res://addons/game-template/transition/ColorRect.gd" type="Script" id=5]
+
+[sub_resource type="Shader" id=11]
+code = "shader_type canvas_item;
+
+uniform vec4 in_color:hint_color;
+uniform vec4 out_color:hint_color;
+
+uniform float in_out:hint_range(0.,1.)=0.;
+
+uniform float position:hint_range(-2.5,1.) = 1.0;
+uniform float  direction = 1.0;
+uniform vec2 size = vec2(16., 16.);
+
+void fragment(){
+	vec2 a = (1./SCREEN_PIXEL_SIZE) / size;
+	
+    vec2 uv=UV;
+	uv *= a;
+    
+    vec2 i_uv = floor(uv);
+    vec2 f_uv = fract(uv);
+    
+    float wave = max(0.,direction*i_uv.y/(a.y) - position);
+    
+    vec2 center = f_uv*2.-1.;
+	float circle = length(center);
+    circle = 1. - step(wave,circle);
+    
+	vec4 color = mix(in_color, out_color, step(0.5, in_out));
+	
+    COLOR=vec4(circle) * color;
+}"
+
+[sub_resource type="ShaderMaterial" id=12]
+shader = SubResource( 11 )
+shader_param/in_color = Color( 1, 0.34902, 0.34902, 1 )
+shader_param/out_color = Color( 1, 0.34902, 0.34902, 1 )
+shader_param/in_out = 0.0
+shader_param/position = 1.0
+shader_param/direction = 1.0
+shader_param/size = Vector2( 30, 30 )
 
 [sub_resource type="Animation" id=9]
 length = 0.001
@@ -288,10 +330,12 @@ script = ExtResource( 4 )
 
 [node name="ColorRect" type="ColorRect" parent="."]
 modulate = Color( 1, 1, 1, 0 )
+material = SubResource( 12 )
 anchor_right = 1.0
 anchor_bottom = 1.0
 mouse_filter = 2
 color = Color( 0.0862745, 0.0862745, 0.0862745, 0 )
+script = ExtResource( 5 )
 
 [node name="Progress" type="Control" parent="ColorRect"]
 anchor_left = 1.0
@@ -314,10 +358,10 @@ anchor_left = 0.5
 anchor_top = 0.5
 anchor_right = 0.5
 anchor_bottom = 0.5
-margin_left = -40.0
-margin_top = -99.0
-margin_right = 40.0
-margin_bottom = -19.0
+margin_left = -20.0
+margin_top = -79.0
+margin_right = 60.0
+margin_bottom = 1.0
 rect_rotation = -90.0
 rect_scale = Vector2( 0.6, 0.6 )
 rect_pivot_offset = Vector2( 40, 40 )
@@ -355,6 +399,13 @@ anims/black = SubResource( 5 )
 anims/transition-in = SubResource( 6 )
 anims/transition-out = SubResource( 7 )
 anims/transparent = SubResource( 8 )
+
+[node name="ColorRect2" type="ColorRect" parent="."]
+material = SubResource( 12 )
+anchor_right = 1.0
+anchor_bottom = 1.0
+mouse_filter = 2
+script = ExtResource( 5 )
 
 [connection signal="animation_finished" from="AnimationPlayer" to="." method="_on_AnimationPlayer_animation_finished"]
 [connection signal="animation_started" from="AnimationPlayer" to="." method="_on_AnimationPlayer_animation_started"]

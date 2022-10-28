@@ -7,10 +7,9 @@ extends CanvasLayer
 signal progress_bar_filled()
 signal transition_started(anim_name)
 signal transition_finished(anim_name)
-
+signal anim_finished
 onready var anim: AnimationPlayer = $AnimationPlayer
 onready var progress = $ColorRect/Progress
-
 
 # Tells if transition is currently displayed
 func is_displayed() -> bool:
@@ -28,20 +27,20 @@ func fade_in(params = {}):
 	if params and params.get('show_progress_bar') != null:
 		if params.get('show_progress_bar') == true:
 			progress.show()
-	anim.play("transition-in")
+	$ColorRect2.Out(1.5)
 
 
 # disappear
 func fade_out():
 	if progress.visible and not progress.is_completed():
 		yield(self, "progress_bar_filled")
-	anim.connect("animation_finished", self, "_on_fade_out_finished", [], CONNECT_ONESHOT)
-	anim.play("transition-out")
+	$ColorRect2.connect("scene_changed", self, "_on_fade_out_finished", [], CONNECT_ONESHOT)
+	$ColorRect2.In(1.5)
 
 
-func _on_fade_out_finished(cur_anim):
-	if cur_anim == "transition-out":
-		progress.bar.value = 0
+func _on_fade_out_finished():
+	print('hh')
+	emit_signal("anim_finished")
 
 
 # progress_ratio: value between 0 and 1

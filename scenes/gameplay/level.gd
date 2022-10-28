@@ -9,15 +9,18 @@ signal finished_comp
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
-	pass # Replace with function body.
-
-func start():
 	var label=$Label
 	var desc=$desc
 	var lvl=$LVL
 	label.rect_position.x=-300
 	lvl.rect_position.x=1000
 	desc.rect_position.x=-600
+	pass # Replace with function body.
+
+func start():
+	var label=$Label
+	var desc=$desc
+	var lvl=$LVL
 	var tween=create_tween().set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_IN_OUT)
 	tween.tween_property(label,"rect_position:x",126.0,0.5)
 	tween.parallel().tween_property(lvl,"rect_position:x",316.0,0.5)

@@ -50,6 +50,7 @@ func stop():
 #	pass
 func explode():
 	var _p = deathParticle.instance()
+	
 	_p.position=global_position
 	_p.rotation=global_rotation
 	_p.emitting=true

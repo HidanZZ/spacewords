@@ -63,18 +63,21 @@ func get_last_loaded_scene_data() -> SceneData:
 func _set_new_scene(resource: PackedScene):
 	var current_scene = get_tree().current_scene
 	current_scene.queue_free()
+	print('exit')
 	yield(current_scene, "tree_exited") # wait for the current scene to be fully removed
 	var instanced_scn: Node = resource.instance() # triggers _init
 	get_tree().root.add_child(instanced_scn) # triggers _ready
 	get_tree().current_scene = instanced_scn
 	if instanced_scn.has_method("pre_start"):
+		print('here prestart')
 		var coroutine_state = instanced_scn.pre_start(_params)
 		if (coroutine_state is GDScriptFunctionState) and (coroutine_state.is_valid()):
 			yield(coroutine_state, "completed")
+	
 	if transitions:
 		transitions.fade_out()
 	if transitions:
-		yield(transitions.anim, "animation_finished")
+		yield(transitions, "anim_finished")
 	if instanced_scn.has_method("start"):
 		instanced_scn.start()
 	emit_signal("change_finished")
@@ -83,6 +86,7 @@ func _set_new_scene(resource: PackedScene):
 
 
 func _transition_appear(params):
+	print('allo')
 	if transitions:
 		transitions.fade_in(params)
 
@@ -116,8 +120,8 @@ func change_scene_background_loading(new_scene: String, params = {}):
 	_params = params
 	_loading_start_time = OS.get_ticks_msec()
 	_transition_appear(params)
-	if transitions:
-		yield(transitions.anim, "animation_finished")
+#	if transitions:
+#		yield(transitions, "anim_finished")
 	_loader_ri.load_scene(new_scene)
 
 
@@ -126,8 +130,9 @@ func _on_change_started(new_scene, params):
 
 
 func _on_resource_loaded(resource):
+	print("resource")
 	if transitions and transitions.is_transition_in_playing():
-		yield(transitions.anim, "animation_finished")
+		yield(transitions, "anim_finished")
 	var load_time = OS.get_ticks_msec() - _loading_start_time # ms
 	print("{scn} loaded in {elapsed}ms".format({
 		'scn': resource.resource_path,
